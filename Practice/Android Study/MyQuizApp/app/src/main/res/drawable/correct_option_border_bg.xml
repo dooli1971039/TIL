@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--TODO (STEP 2: A custom border background for the default options view.)-->
+<!--START-->
+<!-- shape: 어떤 모양으로 만들껀지-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+<!-- line, oval, rectangle .... -->
+
+<!-- solid : 배경 부분 만듬   -->
+    <solid android:color="#C8E8BF" />
+
+    <corners android:radius="5dp" />
+</shape>
+<!--END-->
