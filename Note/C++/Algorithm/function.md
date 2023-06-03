@@ -75,3 +75,26 @@ unique는 중복을 제거하고 난 후의 끝 주소를 return한다.
 그래서 erase와 함께 쓰면 중복을 제거할 수 있다.  
 
 <br/>
+<br/>
+
+## numeric
+### 헤더
+```c++
+#include <numeric>
+```
+<br/>
+
+### 메서드
+- **accumulate(시작 주소,끝 주소, 초기 값)**
+```c++
+// 배열의 모든 합을 구한다
+accumulate(v.begin(),v.end(), num);
+
+// 4번째 인자로 연산함수를 넣을 수 있다.
+accumulate(arr.begin(), arr.end(), 1, multiplies<int>())
+```
+시작 주소 ~ (끝 주소 -1) 범위에서 합을 구한다. (연산 함수를 따로 넣지 않았을 때)  
+accumulate의 반환 값은 initial value를 따라가기 때문에, 초기값을 잘 설정해줘야 한다. (오버플로우 발생 가능)  
+만약 long long 타입을 쓰고 싶다면, 초기값에 0 대신에 0LL을 넣어야 한다.  
+
+<br/>
