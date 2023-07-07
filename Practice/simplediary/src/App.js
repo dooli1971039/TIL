@@ -1,12 +1,36 @@
-import {useState, useRef, useEffect, useMemo, useCallback} from "react";
+import {useState, useRef, useEffect, useMemo, useCallback, useReducer} from "react";
 import "./App.css";
 import DiaryEditor from "./DiaryEditor";
 import DiaryList from "./DiaryList";
 import LifeCycle from "./LifeCycle";
 import diaryList from "./DiaryList";
 
+const reducer = (state, action) => {
+    switch (action.type) {
+        case 'INIT': {
+            return action.data; //reducer의 return이 새로운 state가 된다.
+        }
+        case 'CREATE': {
+            const created_date = new Date().getTime();
+            const newItem = {...action.data, created_date};
+            return [newItem, ...state];
+        }
+        case 'REMOVE': {
+            return state.filter((it) => it.id !== action.targetID)
+        }
+        case 'EDIT': {
+            return state.map((it) => it.id === action.targetID ? {...it, content: action.newContentData} : it)
+        }
+        default:
+            return state;
+    }
+}
+
 function App() {
-    const [data, setData] = useState([]);
+    //const [data, setData] = useState([]); //useReducer 사용할꺼라 주석처리
+
+    const [data, dispatch] = useReducer(reducer, []); // 상태변화를 처리할 함수, data state의 초기값
+
     const dataId = useRef(0); // re-render가 되더라도 값이 유지되어야 함
 
     //async 키워드를 써서, getData가 promise를 반환하는 비동기함수로 만듬
@@ -23,8 +47,8 @@ function App() {
                 id: dataId.current++,
             };
         });
-
-        setData(initData);
+        dispatch({type: "INIT", data: initData})
+        //setData(initData);
     };
 
     useEffect(() => {
@@ -32,17 +56,19 @@ function App() {
     }, []); // 의존성 배열이 비어있으므로, mount 될 때 한번만 실행
 
     const onCreate = useCallback((author, content, emotion) => {
-        const created_date = new Date().getTime();
-        const newItem = {
-            author,
-            content,
-            emotion,
-            created_date,
-            id: dataId.current,
-        };
+        // const created_date = new Date().getTime();
+        // const newItem = {
+        //     author,
+        //     content,
+        //     emotion,
+        //     created_date,
+        //     id: dataId.current,
+        // };
         dataId.current += 1;
         //setData([newItem, ...data]); //새로운 아이템 추가
-        setData((data) => [newItem, ...data]) //setState에 함수를 전달하여 항상 최신 data state를 참조하게 된다.
+        //setData((data) => [newItem, ...data]) //setState에 함수를 전달하여 항상 최신 data state를 참조하게 된다.
+
+        dispatch({type: "CREATE", data: {author, content, emotion, id: dataId.current}})
     }, []);
     /**
      *     빈 배열이고, setData([newItem,...data])로 하면 data가 mount된 시점 이후로 업데이트가 되지 않아 문제가 생김
@@ -51,15 +77,17 @@ function App() {
      */
 
     const onRemove = useCallback((targetID) => {
-        setData((data) =>
-            data.filter((it) => it.id !== targetID)
-        ); // diaryList를 새로 업데이트
+        // setData((data) =>
+        //     data.filter((it) => it.id !== targetID)
+        // ); // diaryList를 새로 업데이트
+        dispatch({type: "REMOVE", targetID})
     }, []);
 
     const onEdit = useCallback((targetID, newContentData) => {
         // id가 targetID와 같은 경우
         // author, emotion, date는 같게 두고, content만 수정
-        setData((data) => data.map((it) => (it.id === targetID ? {...it, content: newContentData} : it)));
+        //setData((data) => data.map((it) => (it.id === targetID ? {...it, content: newContentData} : it)));
+        dispatch({type: "EDIT", targetID, newContentData})
     }, []);
 
     const getDiaryAnalysis = useMemo(() => {
