@@ -1,4 +1,4 @@
-import {useState, useRef} from "react";
+import React, {useState, useRef} from "react";
 
 const DiaryEditor = ({onCreate}) => {
     //App.js에서 onCreate함수를 내려받음
@@ -21,6 +21,7 @@ const DiaryEditor = ({onCreate}) => {
     const handleSubmit = () => {
         if (state.author.length < 1) {
             //focus
+            //현재 가리키는 값을 current로 불러오는 것
             authorInput.current.focus(); //authorInput.current가 태그를 가리킨다
             return;
         }
@@ -31,6 +32,7 @@ const DiaryEditor = ({onCreate}) => {
             return;
         }
         onCreate(state.author, state.content, state.emotion);
+        // 데이터 추가하면 필드 초기화 할 것
         setState({
             author: "",
             content: "",
@@ -51,12 +53,13 @@ const DiaryEditor = ({onCreate}) => {
             </div>
 
             <div>
-                <textarea name="content" value={state.content} onChange={handleChangeState} ref={contentInput} />
+                <textarea name="content" value={state.content} onChange={handleChangeState} ref={contentInput}/>
             </div>
 
             <div>
                 <span>오늘의 감정점수 : </span>
                 <select name="emotion" value={state.emotion} onChange={handleChangeState}>
+                    {/* JSX에서 {} 안에 for문은 사용할 수 없다. */}
                     <option value={1}>1</option>
                     <option value={2}>2</option>
                     <option value={3}>3</option>
@@ -72,4 +75,4 @@ const DiaryEditor = ({onCreate}) => {
     );
 };
 
-export default DiaryEditor;
+export default React.memo(DiaryEditor);

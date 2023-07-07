@@ -1,4 +1,4 @@
-import {useState, useRef} from "react";
+import React, {useState, useRef, useEffect} from "react";
 
 const DiaryItem = ({id, author, content, emotion, created_date, onRemove, onEdit}) => {
     const [isEdit, setIsEdit] = useState(false); //수정중인지 아닌지
@@ -16,7 +16,7 @@ const DiaryItem = ({id, author, content, emotion, created_date, onRemove, onEdit
 
     const handleQuitEdit = () => {
         toggleIsEdit();
-        setLocalContent(content);
+        setLocalContent(content); // 원래의 내용으로 원상복구
     };
 
     const handleEdit = () => {
@@ -37,7 +37,7 @@ const DiaryItem = ({id, author, content, emotion, created_date, onRemove, onEdit
                 <span className="author_info">
                     | 작성자 : {author} | 감정점수 : {emotion} |
                 </span>
-                <br />
+                <br/>
                 <span className="date">{new Date(created_date).toLocaleString()}</span>
             </div>
             <div className="content">
@@ -69,4 +69,4 @@ const DiaryItem = ({id, author, content, emotion, created_date, onRemove, onEdit
     );
 };
 
-export default DiaryItem;
+export default React.memo(DiaryItem);
