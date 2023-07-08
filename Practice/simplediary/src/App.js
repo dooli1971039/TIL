@@ -1,4 +1,4 @@
-import {useState, useRef, useEffect, useMemo, useCallback, useReducer} from "react";
+import React, {useState, useRef, useEffect, useMemo, useCallback, useReducer} from "react";
 import "./App.css";
 import DiaryEditor from "./DiaryEditor";
 import DiaryList from "./DiaryList";
@@ -25,6 +25,9 @@ const reducer = (state, action) => {
             return state;
     }
 }
+
+export const DiaryStateContext = React.createContext();
+export const DiaryDispatchContext = React.createContext();
 
 function App() {
     //const [data, setData] = useState([]); //useReducer 사용할꺼라 주석처리
@@ -90,6 +93,11 @@ function App() {
         dispatch({type: "EDIT", targetID, newContentData})
     }, []);
 
+    // 재생성되는 일이 없이 값으로 전달하려고 useMemo 사용
+    const memoizedDispatches = useMemo(() => {
+        return {onCreate, onRemove, onEdit};
+    }, [])
+
     const getDiaryAnalysis = useMemo(() => {
         const goodCount = data.filter((it) => it.emotion >= 3).length;
         const badCount = data.length - goodCount;
@@ -109,11 +117,16 @@ function App() {
     const {goodCount, badCouunt, goodRatio} = getDiaryAnalysis;
 
     return (
-        <div className="App">
-            {/* <LifeCycle /> */}
-            <DiaryEditor onCreate={onCreate}/>
-            <DiaryList diaryList={data} onRemove={onRemove} onEdit={onEdit}/>
-        </div>
+        // value prop으로 내려주는 값은 언제든지 가져다 쓸 수 있다.
+        <DiaryStateContext.Provider value={data}>
+            <DiaryDispatchContext.Provider value={memoizedDispatches}>
+                <div className="App">
+                    {/* <LifeCycle /> */}
+                    <DiaryEditor/>
+                    <DiaryList/>
+                </div>
+            </DiaryDispatchContext.Provider>
+        </DiaryStateContext.Provider>
     );
 }
 

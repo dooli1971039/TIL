@@ -1,6 +1,10 @@
 import DiaryItem from "./DiaryItem";
+import {useContext} from "react";
+import {DiaryStateContext} from "./App";
 
-const DiaryList = ({diaryList, onRemove, onEdit}) => {
+const DiaryList = () => {
+    const diaryList = useContext(DiaryStateContext);
+
     return (
         <div className="DiaryList">
             <h2>일기리스트</h2>
@@ -9,7 +13,7 @@ const DiaryList = ({diaryList, onRemove, onEdit}) => {
                 {/* map의 2번째 인자로 idx를 받아서 key에 넣어주는 방법도 있지만,
                 리스트 순서가 바뀌면 문제가 될 수 있으니 id를 따로 받는 것이 좋다.*/}
                 {diaryList.map((it) => (
-                    <DiaryItem key={it.id} {...it} onRemove={onRemove} onEdit={onEdit}/>
+                    <DiaryItem key={it.id} {...it}/>
                 ))}
             </div>
         </div>

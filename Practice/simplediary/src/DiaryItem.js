@@ -1,6 +1,9 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useRef, useEffect, useContext} from "react";
+import {DiaryDispatchContext} from "./App";
 
-const DiaryItem = ({id, author, content, emotion, created_date, onRemove, onEdit}) => {
+const DiaryItem = ({id, author, content, emotion, created_date}) => {
+    const {onRemove, onEdit} = useContext(DiaryDispatchContext);
+
     const [isEdit, setIsEdit] = useState(false); //수정중인지 아닌지
 
     const toggleIsEdit = () => setIsEdit(!isEdit); // isEdit 반전시키기
